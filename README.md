@@ -43,3 +43,4 @@ TODOS
 -----
 
 - A real test suite (not just running it a bit against SkidBot.)
+- Figure out scoping rules properly (and add tests for them.)

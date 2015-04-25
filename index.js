@@ -55,6 +55,7 @@ Interpreter.prototype._runStatement = function (locals, stmt) {
   return {
     CallStatement: this._runCallStatement,
     ProcedureStatement: this._runProcedureStatement,
+    AssignmentStatement: this._runAssignmentStatement,
     InfiniteLoopStatement: this._runInfiniteLoopStatement,
     WhileLoopStatement: this._runWhileLoopStatement,
     CountLoopStatement: this._runCountLoopStatement,
@@ -83,6 +84,11 @@ Interpreter.prototype._runProcedureStatement = function (locals, stmt) {
       throw exc;
     });
   };
+};
+
+Interpreter.prototype._runAssignmentStatement = function (locals, stmt) {
+  var value = this._evalExpression(locals, stmt.value);
+  this._vars[stmt.name] = function () { return value; };
 };
 
 Interpreter.prototype._runInfiniteLoopStatement = function (locals, stmt) {
@@ -215,7 +221,7 @@ Interpreter.prototype._evalBinaryExpression = function (locals, expr) {
       });
     }
   }[expr.operator.type] || function () {
-    return Promise.all([left, right]).then(function (values) {
+    return Promise.all([left(), right()]).then(function (values) {
       return Promise.resolve({
         '*': function (a, b) { return a * b; },
         // emulate integer division
@@ -228,7 +234,7 @@ Interpreter.prototype._evalBinaryExpression = function (locals, expr) {
         '<=': function (a, b) { return +(a <= b); },
         '>': function (a, b) { return +(a > b); },
         '>=': function (a, b) { return +(a >= b); }
-      }[expr.operator.type]());
+      }[expr.operator.type](values[0], values[1]));
     });
   })();
 };
