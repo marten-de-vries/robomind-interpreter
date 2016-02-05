@@ -197,7 +197,7 @@ Interpreter.prototype._evalLiteral = function (locals, expr) {
 Interpreter.prototype._evalUnaryExpression = function (locals, expr) {
   return this._evalExpression(locals, expr.value).then({
     'not': function (a) { return +!a; },
-    '-': function (a) { return a; }
+    '-': function (a) { return -a; }
   }[expr.operator.type]);
 };
 
