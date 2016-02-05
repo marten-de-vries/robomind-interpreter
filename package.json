@@ -29,6 +29,6 @@
   "license": "ISC",
   "dependencies": {
     "inherits": "^2.0.1",
-    "lie": "^2.8.1"
+    "lie": "^3.0.2"
   }
 }
